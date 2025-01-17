@@ -1,0 +1,136 @@
+/* ページ全体をフレックスボックスで整える */
+body {
+    display: flex;
+    flex-direction: column;
+    /* 縦並びにする */
+    height: 100vh;
+    /* ビューポートに合わせる */
+    margin: 0;
+    /* ページの余白をリセット */
+}
+
+/* ログアウトボタンを右上に配置するためのスタイル */
+.logout-btn-container {
+    margin: 20px;
+    /* 上部と右側に余白 */
+    align-self: flex-end;
+    /* 右端に寄せる */
+}
+
+/* ログアウトボタンのスタイル */
+.logout-btn-container button {
+    background-color: #FF6F61;
+    /* 明るい赤色（目立つ色） */
+    color: white;
+    /* 文字色を白に */
+    font-size: 18px;
+    /* フォントサイズを大きく */
+    padding: 10px 20px;
+    /* ボタン内の余白を増やす */
+    border: none;
+    /* 枠線なし */
+    border-radius: 5px;
+    /* 角を丸く */
+    cursor: pointer;
+    /* ポインタを表示 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    /* ボタンに影を追加 */
+    transition: background-color 0.3s, transform 0.3s;
+    /* ホバー時のアニメーション */
+}
+
+/* ボタンにマウスホバーしたときのスタイル */
+.logout-btn-container button:hover {
+    background-color: #D54B4A;
+    /* 少し濃い赤色 */
+    transform: scale(1.1);
+    /* ボタンが少し大きくなる */
+}
+
+/* ボタンがフォーカスされたときのスタイル */
+.logout-btn-container button:focus {
+    outline: none;
+    /* フォーカス時の枠線を消す */
+    box-shadow: 0 0 5px 2px rgba(255, 111, 97, 0.7);
+    /* 赤い光のような影を表示 */
+}
+
+/* テーブル全体のスタイル */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 16px;
+    font-family: 'Arial', sans-serif;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ヘッダーのスタイル */
+.styled-table thead tr {
+    background-color: #FFC1CC;
+    /* 柔らかなピンク */
+    color: #ffffff;
+    /* 白文字 */
+    text-align: center;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+/* 各セルのスタイル */
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+    border: 1px solid #FDD7E4;
+    /* 淡いピンクで枠線を */
+    text-align: left;
+    vertical-align: middle;
+}
+
+/* 行の背景色とホバー効果 */
+.styled-table tbody tr:nth-of-type(odd) {
+    background-color: #FFF5F8;
+    /* さらに淡いピンク */
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #FFEFF5;
+    /* 優しい白っぽいピンク */
+}
+
+.styled-table tbody tr:hover {
+    background-color: #FFDEE7;
+    /* ホバー時に少し濃いピンク */
+}
+
+/* モバイル対応 */
+@media screen and (max-width: 768px) {
+    .styled-table {
+        font-size: 14px;
+    }
+
+    .styled-table thead {
+        display: none;
+    }
+
+    .styled-table tr {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .styled-table td {
+        display: block;
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    .styled-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 15px;
+        font-weight: bold;
+        text-align: left;
+    }
+}
