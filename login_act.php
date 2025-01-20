@@ -1,36 +1,46 @@
 <?php
-//最初にSESSIONを開始！！ココ大事！！
+// 最初にSESSIONを開始！！ココ大事！！
 session_start();
 
-//POST値を受け取る
+// POST値を受け取る
 $lid = $_POST['lid'];
 $lpw = $_POST['lpw'];
 
-//1.  DB接続します
+// フォームデータのバリデーション
+if (empty($lid) || empty($lpw)) {
+    header('Location: login.php?error=1'); // 入力が空の場合、エラーを表示
+    exit();
+}
+
+// 1. DB接続します
 require_once('funcs.php');
 $pdo = db_conn();
 
-//2. データ登録SQL作成
-// gs_user_tableに、IDとWPがあるか確認する。
-$stmt = $pdo->prepare('SELECT * FROM gs_user_table where lid = :lid AND lpw = :lpw;');
+// 2. データ取得SQL作成
+$stmt = $pdo->prepare('SELECT * FROM gs_user_table WHERE lid = :lid');
 $stmt->bindValue(':lid', $lid, PDO::PARAM_STR);
-$stmt->bindValue(':lpw', $lpw, PDO::PARAM_STR);
 $status = $stmt->execute();
 
-//3. SQL実行時にエラーがある場合STOP
+// 3. SQL実行時にエラーがある場合STOP
 if ($status === false) {
-    sql_error($stmt);
+    // SQLエラーの詳細を表示
+    $errorInfo = $stmt->errorInfo();
+    echo "SQL Error: " . $errorInfo[2];
+    exit();
 }
-//4. 抽出データ数を取得
+
+// 4. 抽出データを取得
 $val = $stmt->fetch();
 
-//if(password_verify($lpw, $val['lpw'])){ //* PasswordがHash化の場合はこっちのIFを使う
-if ($val['id'] != '') {
-    //Login成功時 該当レコードがあればSESSIONに値を代入
+// パスワードがハッシュ化されている場合（パスワードの検証）
+if (password_verify($lpw, $val['lpw'])) { // ハッシュ化されている前提
+    // Login成功時
     $_SESSION['chk_ssid'] = session_id();
     header('Location: select.php');
+    exit();
 } else {
-    //Login失敗時(Logout経由)
+    // Login失敗時（再度ログイン画面にリダイレクト）
     header('Location: login.php');
+    exit();
 }
-exit();
+
