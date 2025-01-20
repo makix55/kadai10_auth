@@ -1,14 +1,17 @@
 <?php
+// セッション開始
+session_start();
+
 // DB接続
 require_once('funcs.php');
 $pdo = db_conn();
 
 // ログインチェック
 if (!isset($_SESSION['chk_ssid']) || $_SESSION['chk_ssid'] !== session_id()) {
-    // 未ログイン、またはセッションIDが一致しない場合はログイン画面へリダイレクト
-    header('Location: login.php');
-    exit();
-    }
+  // 未ログイン、またはセッションIDが一致しない場合はログイン画面へリダイレクト
+  header('Location: login.php');
+  exit();
+}
 
 // 検索条件
 $search_name = isset($_GET['search_name']) ? $_GET['search_name'] : '';
@@ -58,94 +61,93 @@ if ($status === false) {
 </head>
 
 <body id="main">
-    <div class="logout-btn-container">
-      <a href="logout.php"><button>ログアウト</button></a>
-    </div>
-    <header>
-      <nav class="navbar navbar-default">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="index.php">データ登録画面</a>
-          </div>
+  <div class="logout-btn-container">
+    <a href="logout.php"><button>ログアウト</button></a>
+  </div>
+  <header>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="index.php">データ登録画面</a>
         </div>
-      </nav>
-    </header>
+      </div>
+    </nav>
+  </header>
 
-    <div class="container">
-      <h2>講師派遣申込一覧表</h2>
+  <div class="container">
+    <h2>講師派遣申込一覧表</h2>
 
-      <!-- 検索フォーム -->
-      <form action="select.php" method="GET">
-        <label for="search_id">「受付番号」:</label>
-        <input type="text" name="search_id" id="search_id" value="<?= isset($_GET['search_id']) ? h($_GET['search_id']) : '' ?>">
+    <!-- 検索フォーム -->
+    <form action="select.php" method="GET">
+      <label for="search_id">「受付番号」:</label>
+      <input type="text" name="search_id" id="search_id" value="<?= isset($_GET['search_id']) ? h($_GET['search_id']) : '' ?>">
 
-        <label for="search_name">「学校名」:</label>
-        <input type="text" name="search_name" id="search_name" value="<?= isset($_GET['search_name']) ? h($_GET['search_name']) : '' ?>">
+      <label for="search_name">「学校名」:</label>
+      <input type="text" name="search_name" id="search_name" value="<?= isset($_GET['search_name']) ? h($_GET['search_name']) : '' ?>">
 
-        <button type="submit">検 索</button>
-        <button type="button" onclick="clearSearch()">全てのデータを表示</button>
-      </form>
+      <button type="submit">検 索</button>
+      <button type="button" onclick="clearSearch()">全てのデータを表示</button>
+    </form>
 
-      <script>
-        function clearSearch() {
-          window.location.href = "select.php";
-        }
-      </script>
+    <script>
+      function clearSearch() {
+        window.location.href = "select.php";
+      }
+    </script>
 
-      <table class="styled-table">
-        <thead>
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>受付No.</th>
+          <th>学校名</th>
+          <th>郵便番号</th>
+          <th>所在地</th>
+          <th>最寄駅・バス停</th>
+          <th>Email</th>
+          <th>電話番号</th>
+          <th>FAX番号</th>
+          <th>担当の先生名</th>
+          <th>授業希望日</th>
+          <th>希望の講師</th>
+          <th>その他ご要望</th>
+          <th>登録日</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($result as $row): ?>
           <tr>
-            <th>受付No.</th>
-            <th>学校名</th>
-            <th>郵便番号</th>
-            <th>所在地</th>
-            <th>最寄駅・バス停</th>
-            <th>Email</th>
-            <th>電話番号</th>
-            <th>FAX番号</th>
-            <th>担当の先生名</th>
-            <th>授業希望日</th>
-            <th>希望の講師</th>
-            <th>その他ご要望</th>
-            <th>登録日</th>
-            <th>操作</th>
+            <td><?= h($row['id']) ?></td>
+            <td><?= h($row['name']) ?></td>
+            <td><?= h($row['code']) ?></td>
+            <td><?= h($row['address']) ?></td>
+            <td><?= h($row['station']) ?></td>
+            <td><?= h($row['email']) ?></td>
+            <td><?= h($row['tel']) ?></td>
+            <td><?= h($row['fax']) ?></td>
+            <td><?= h($row['teacher']) ?></td>
+            <td><?= h($row['schedule']) ?></td>
+            <td><?= h($row['soroteacher']) ?></td>
+            <td><?= h($row['content']) ?></td>
+            <td><?= h($row['date']) ?></td>
+            <td>
+              <!-- 編集ボタン -->
+              <form action="update.php" method="GET" style="display:inline;">
+                <input type="hidden" name="id" value="<?= h($row['id']) ?>">
+                <button type="submit">編 集</button>
+              </form>
+              <!-- 論理削除ボタン -->
+              <form action="delete.php" method="POST" style="display:inline;">
+                <input type="hidden" name="id" value="<?= h($row['id']) ?>">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('本当に削除してもよろしいですか？');">削 除</button>
+              </form>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($result as $row): ?>
-            <tr>
-              <td><?= h($row['id']) ?></td>
-              <td><?= h($row['name']) ?></td>
-              <td><?= h($row['code']) ?></td>
-              <td><?= h($row['address']) ?></td>
-              <td><?= h($row['station']) ?></td>
-              <td><?= h($row['email']) ?></td>
-              <td><?= h($row['tel']) ?></td>
-              <td><?= h($row['fax']) ?></td>
-              <td><?= h($row['teacher']) ?></td>
-              <td><?= h($row['schedule']) ?></td>
-              <td><?= h($row['soroteacher']) ?></td>
-              <td><?= h($row['content']) ?></td>
-              <td><?= h($row['date']) ?></td>
-              <td>
-                <!-- 編集ボタン -->
-                <form action="update.php" method="GET" style="display:inline;">
-                  <input type="hidden" name="id" value="<?= h($row['id']) ?>">
-                  <button type="submit">編 集</button>
-                </form>
-                <!-- 論理削除ボタン -->
-                <form action="delete.php" method="POST" style="display:inline;">
-                  <input type="hidden" name="id" value="<?= h($row['id']) ?>">
-                  <button type="submit" class="btn btn-danger" onclick="return confirm('本当に削除してもよろしいですか？');">削 除</button>
-                </form>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
 
-    </div>
-
-  </body>
+  </div>
+</body>
 
 </html>
