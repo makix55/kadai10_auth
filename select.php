@@ -3,6 +3,13 @@
 require_once('funcs.php');
 $pdo = db_conn();
 
+// ログインチェック
+if (!isset($_SESSION['chk_ssid']) || $_SESSION['chk_ssid'] !== session_id()) {
+    // 未ログイン、またはセッションIDが一致しない場合はログイン画面へリダイレクト
+    header('Location: login.php');
+    exit();
+    }
+
 // 検索条件
 $search_name = isset($_GET['search_name']) ? $_GET['search_name'] : '';
 $search_id = isset($_GET['search_id']) ? $_GET['search_id'] : '';
