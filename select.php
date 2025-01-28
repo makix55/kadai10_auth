@@ -1,17 +1,9 @@
 <?php
-// セッション開始
-session_start();
-
 // DB接続
 require_once('funcs.php');
-$pdo = db_conn();
+loginCheck();
 
-// ログインチェック
-if (!isset($_SESSION['chk_ssid']) || $_SESSION['chk_ssid'] !== session_id()) {
-  // 未ログイン、またはセッションIDが一致しない場合はログイン画面へリダイレクト
-  header('Location: login.php');
-  exit();
-}
+$pdo = db_conn();
 
 // 検索条件
 $search_name = isset($_GET['search_name']) ? $_GET['search_name'] : '';
@@ -148,6 +140,7 @@ if ($status === false) {
     </table>
 
   </div>
+
 </body>
 
 </html>
